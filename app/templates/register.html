@@ -1,0 +1,69 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-5 col-xs-12 tag-ads">
+        <!--                <img width="100%" src="https://i.pinimg.com/236x/57/a5/01/57a5010a22a577ca1825669a144cc453.jpg" alt="">-->
+        <img width="70%" src="https://d1j8r0kxyu9tj8.cloudfront.net/files/1582782582h5DhM7zcUDHc3kY.jpg" alt="">
+        <!--        <img width="48%" src="https://d1csarkz8obe9u.cloudfront.net/posterpreviews/movie-poster-template-design-21a1c803fe4ff4b858de24f5c91ec57f_screen.jpg?ts=1636996180" alt="">-->
+        <!--        <img width="48%" src="https://2.bp.blogspot.com/-1qDNeVG4V68/TnRjLfOljxI/AAAAAAAACo0/x5Lvkw-j74U/s1600/avatar.jpg" alt="">-->
+    </div>
+    <div class="col-md-6 col-xs-12 register-bg">
+        <h1 class="text-title text-center">REGISTER</h1>
+        <hr>
+
+        {% if err_msg %}
+        <div class="mt-5">
+            <p class="text-center text-danger">{{ err_msg }}</p>
+        </div>
+        {% endif %}
+
+        <p>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+        <div class="alert alert-primary">
+            <strong>{{ message }}</strong>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        </p>
+
+        <form action="/user-register" method="POST" class="form-group" enctype="multipart/form-data">
+            <label class="{% if not err_msg %}mt-5{% else %}mt-1{% endif %}" for="fullName">Full name</label>
+            <input id="fullName" name="fullName" required type="text"
+                   class="form-control">
+
+            <label class="mt-1" for="email">Email</label>
+            <input id="email" name="email" required type="email"
+                   class="form-control mt-2">
+
+            <label class="mt-1" for="username">Username</label>
+            <input id="username" name="username" required type="text"
+                   class="form-control mt-2">
+
+            <label class="mt-1" for="password">Password</label>
+            <input id="password" name="password" required type="password"
+                   class="form-control mt-2">
+
+            <label class="mt-1" for="password">Confirm
+                password</label>
+            <input id="confirm" name="confirm" required type="password"
+                   class="form-control mt-2">
+
+            <label for="avatar">Avatar</label>
+            <input type="file" class="form-control mt-2" id="avatar" name="avatar">
+
+            <div style="display: flex; justify-content: center;" class="text-center mt-3">{{ recaptcha }}</div>
+            {% if captcha_err_msg %}
+            <div>
+                <p class="text-center text-primary">{{ captcha_err_msg }}</p>
+            </div>
+            {% endif %}
+            <input type="submit" value='Register'
+                   class="btn-register form-control mt-3">
+        </form>
+    </div>
+</div>
+{% endblock %}

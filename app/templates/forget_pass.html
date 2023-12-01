@@ -1,0 +1,14 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Forget Password{% endblock %}
+{% block content %}
+<h1>{{username}}</h1>
+<form action="/forget_pass" method="POST" class="form-group">
+
+    <label class="mt-1" for="username">Username</label>
+    <input id="username" name="username" required type="text"
+           class="form-control mt-2">
+
+    <input type="submit" value='Send OTP'
+           class="btn-register form-control mt-3">
+</form>
+{% endblock %}

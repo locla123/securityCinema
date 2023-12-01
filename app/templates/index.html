@@ -1,0 +1,40 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1 class="text-center text-title">_BEST MOVIES EVER_</h1>
+<ul class="pagination">
+    {% for index in range(1, page_size + 1) %}
+    <li class="page-item {% if 'page' in request.args and request.args.page|int == index %}active-custom{% elif 'page' not in request.args and index == 1  %}active-custom{% endif %}">
+        <a class="page-link" href="{{ url_for('index', page=index) }}">{{ index }}</a></li>
+    {% endfor %}
+</ul>
+
+<div class="row">
+    {% for m in movies %}
+    <div class="col-xs-12 col-md-3" style="padding: 18px;">
+        <div style="width: 100%;" class="img">
+            <img style="margin: 10px; height: 415px;" class="card-img-top"
+                 src="{{ url_for('static', filename=m.image)}}"
+                 alt="Card image">
+        </div>
+
+        <div class="card-body">
+            <h4 style="font-size: 14px" class="card-title">{{m.name}}</h4>
+            <p class="card-text">{{ "{:,.1f}".format(m.price) }} VND</p>
+            <a href="{{ url_for('detail', movie_id=m.id) }}" class="button2 btn">Details</a>
+            <a href="{{ url_for('book_ticket', movie_id=m.id) }}" class="btn button2">Buy ticket</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div style="position: relative;" class="p-right mt-3">
+    <ul style="position: absolute; right: 0;" class="pagination">
+        {% for index in range(1, page_size + 1) %}
+        <li class="page-item {% if 'page' in request.args and request.args.page|int == index %}active-custom{% elif 'page' not in request.args and index == 1  %}active-custom{% endif %}">
+            <a class="page-link" href="{{ url_for('index', page=index) }}">{{ index }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

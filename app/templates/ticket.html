@@ -1,0 +1,25 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Ticket details{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Detail</h1>
+<table class="table mt-5">
+    <tr>
+        <th>Movie</th>
+        <th>Starting</th>
+        <th>Ending</th>
+        <th>Room</th>
+        <th>Seat</th>
+    </tr>
+    {% for t in tickets %}
+    <tr>
+        <td>{{ t.movie_name }}</td>
+        <td>{{ t.start_time }}</td>
+        <td>{{ t.end_time }}</td>
+        <td>{{ t.showroom_name }}</td>
+        <td>{{ t.seat_name }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

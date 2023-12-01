@@ -1,0 +1,60 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Booking Ticket{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/booking.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<h1 class="text-title text-center">Amazing movies are waiting for you!</h1>
+
+<div class="row mt-5">
+    <div class="col-md-5 col-xs-12">
+        <div>
+            <img width="70%" class="poster" src="{{ url_for('static', filename=movie.image) }}" alt="{{ movie.name }}">
+        </div>
+    </div>
+    <div class="col-md-6 col-xs-12">
+        <form action="" class="form-group mt-5">
+            <input style="margin: 0;" type="text" readonly value="{{ movie.name }}" class="mt-2 form-control">
+            <label class="m-0 mt-2"><b>Date</b></label>
+            {% for sh in shows %}
+            <a class="btn mt-2 btn-time {% if 'show_schedule_id' in request.args and request.args.show_schedule_id|int == sh.id|int %}active-click{% endif %}" href="{{ url_for('book_ticket', movie_id=movie.id, show_schedule_id=sh.id) }}">{{ sh.time }}</a>
+            {% endfor %}
+            {% if showtime %}
+                <label class="m-0 mt-2"><b>Time</b></label>
+                {% for st in showtime %}
+                <a href="{{ url_for('book_ticket', movie_id=movie.id, show_schedule_id=request.args.show_schedule_id , showtime_id=st.id, showroom_id=st.showroom_id) }}"
+                    class="btn btn-time mt-2 {% if 'showroom_id' in request.args and request.args.showroom_id|int == st.showroom_id|int %}active-click{% endif %}"
+                >
+                    {{ st.start_time }} - {{ st.end_time }} - Room {{ st.name }}
+                </a>
+                {% endfor %}
+            {% endif %}
+            <label class="m-0 mt-2"><b>Seat</b></label>
+
+            <table>
+                <tr>
+                    {% for s in seats %}
+                    <td>
+                        <a style="margin-right: 1rem;" href="{{ url_for('book_ticket', movie_id=movie.id, show_schedule_id=request.args.show_schedule_id, showtime_id=request.args.showtime_id, showroom_id=request.args.showroom_id, seat_id=s.id) }}" class="btn btn-time mt-2 {% if 'seat_id' in request.args and request.args.seat_id|int == s.id %}active-click{% endif %}">{{ s.name }}</a>
+                    </td>
+                    {% endfor %}
+                </tr>
+            </table>
+            {% if rate %}
+            <label class="m-0 mt-2"><b>Rate: </b>{{ rate }}</label>
+            <input type="text" readonly value="Total price: {{ movie.price }} + {{ movie.price }} * {{ rate }} = {{ "{:,.1f}".format(movie.price + movie.price * rate  ) }} VND" class="form-control mt-4 m-0">
+            {% if current_user.is_authenticated %}
+            <div id="ticket-info">
+                <input value="Buy" onclick="takeTicketInfo('{{ movie.id }}', ' {{ request.args.show_schedule_id }}', '{{ request.args.showtime_id }}', '{{ request.args.showroom_id }}', '{{ request.args.seat_id }}', '{{ current_user.id }}', {{ movie.price + movie.price * rate }})" type="button" class="form-control btn btn-register mt-5">
+            </div>
+            {% else %}
+            <a class="btn btn-time mt-5" href="{{ url_for('user_login', next='book_ticket') }}">Sign in to book ticket</a>
+            {% endif %}
+            {% endif %}
+        </form>
+
+    </div>
+</div>
+{% endblock %}

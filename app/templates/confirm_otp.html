@@ -1,0 +1,31 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Confirm OTP{% endblock %}
+{% block content %}
+<h1>Confirm OTP</h1>
+<style>
+    /* CSS để căn giữa form */
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    h1 {
+    text-align: center
+    }
+
+    label, input {
+        margin-bottom: 10px; /* Khoảng cách giữa label và input */
+    }
+</style>
+    {% if error_message %}
+        <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+
+    <form method="POST" action="confirm-otp">
+        <label for="otp">Enter OTP:</label>
+        <input type="text" id="otp" name="otp" required>
+        <br><br>
+        <input type="submit" value="Confirm">
+    </form>
+{% endblock %}
