@@ -1,11 +1,22 @@
 import math
-from flask import render_template, request, redirect, url_for, flash, jsonify, session
+from flask import render_template, request, redirect, url_for, jsonify, session
 from app import app, dao, login, recaptcha
 from app.encode import blowfish
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, login_required, current_user
 import cloudinary.uploader
 from pyotp import TOTP
 import requests
+
+from jinja2 import Environment, FileSystemLoader
+from app.encode.blowfish import decrypt
+
+
+@app.template_filter('decrypt')
+def decrypt_user_full_name(user):
+    env = Environment(loader=FileSystemLoader('templates'))
+    env.filters['decrypt'] = decrypt
+    return decrypt(user.full_name, user.key)
+
 
 totp = TOTP('base32secret3232')
 
@@ -168,8 +179,6 @@ def user_login():
                 user = dao.check_user_valid(username=username, password=password)
                 if user:
                     login_user(user=user)
-
-                    print(ref)
                     return redirect(url_for(ref))
                 else:
                     err_msg = 'Username or password is incorrect!'
@@ -221,6 +230,7 @@ def book_ticket():
                            rate=rate)
 
 
+@login_required
 @app.route('/api/ticket-info', methods=['POST'])
 def ticket_info():
     data = request.json

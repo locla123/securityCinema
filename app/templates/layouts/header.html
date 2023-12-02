@@ -33,11 +33,11 @@
                     </a>
                     <ul style="padding: 0.5rem;" class="dropdown-menu">
                         <li>
-                            <a class="dropdown-item nav-link" href="/details">{{ current_user.full_name }}</a>
+                            <a class="dropdown-item nav-link" href="/details">{{ current_user | decrypt() }}</a>
                         </li>
                         <li>
                             <a class="dropdown-item nav-link" href="{{ url_for('user_logout') }}">
-                                <b>Sign out {{ current_user.name }}</b>
+                                <b>Sign out {{ current_user.name  }}</b>
                             </a>
                         </li>
                     </ul>
