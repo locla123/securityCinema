@@ -37,7 +37,7 @@
                 <tr>
                     {% for s in seats %}
                     <td>
-                        <a style="margin-right: 1rem;" href="{{ url_for('book_ticket', movie_id=movie.id, show_schedule_id=request.args.show_schedule_id, showtime_id=request.args.showtime_id, showroom_id=request.args.showroom_id, seat_id=s.id) }}" class="btn btn-time mt-2 {% if 'seat_id' in request.args and request.args.seat_id|int == s.id %}active-click{% endif %}">{{ s.name }}</a>
+                        <a style="margin-right: 1rem;" href="{{ url_for('book_ticket', movie_id=movie.id, show_schedule_id=request.args.show_schedule_id, showtime_id=request.args.showtime_id, showroom_id=request.args.showroom_id, seat_id=s.id) }}" class="btn btn-time mt-2 {% if 'seat_id' in request.args and request.args.seat_id|int == s.id %}active-click{% endif %}">{{ s.name | caesar_decrypt }}</a>
                     </td>
                     {% endfor %}
                 </tr>

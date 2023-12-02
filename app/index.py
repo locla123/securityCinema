@@ -1,21 +1,75 @@
 import math
+import random
+
 from flask import render_template, request, redirect, url_for, jsonify, session
+from pyotp import TOTP
+
 from app import app, dao, login, recaptcha
 from app.encode import blowfish
 from flask_login import login_user, logout_user, login_required, current_user
 import cloudinary.uploader
-from pyotp import TOTP
+
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib
 import requests
+
+
+
+def generate_otp():
+    length = 6
+    otp = ''
+    for _ in range(length):
+        otp += str(random.randint(0, 9))
+
+    return otp
+
+
+def verify_otp(otp, user_otp):
+    print(otp)
+    print(user_otp)
+    if str(otp).__eq__(str(user_otp)):
+        return True
+    return False
+
+
+def send_otp_email(email, otp):
+    myemail = '2151050187khanh@ou.edu.vn'
+    mypassword = '079203035064'
+
+    connection = smtplib.SMTP("smtp.gmail.com", 587)
+    connection.starttls()
+    connection.login(user=myemail, password=mypassword)
+
+    message = MIMEMultipart()
+    message['From'] = myemail
+    message['To'] = email
+    message['Subject'] = "Your OTP"  # Chủ đề của email
+    body = f"Your OTP is: {otp}"
+    message.attach(MIMEText(body, 'plain'))
+
+    connection.send_message(message)
+    connection.quit()
+
 
 from jinja2 import Environment, FileSystemLoader
 from app.encode.blowfish import decrypt
+from app.encode.caesar import caesar_decrypt, K
 
 
-@app.template_filter('decrypt')
-def decrypt_user_full_name(user):
+@app.template_filter('decrypt_blowfish')
+def blowfish_decrypt_user_full_name(user):
     env = Environment(loader=FileSystemLoader('templates'))
-    env.filters['decrypt'] = decrypt
+    env.filters['decrypt_blowfish'] = decrypt
     return decrypt(user.full_name, user.key)
+
+
+@app.template_filter('caesar_decrypt')
+def caesar_decrypt_seat_name(seat_name):
+    env = Environment(loader=FileSystemLoader('templates'))
+    env.filters['caesar_decrypt'] = caesar_decrypt
+    return caesar_decrypt(seat_name, K)
+
 
 
 totp = TOTP('base32secret3232')

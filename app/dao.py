@@ -1,7 +1,7 @@
 from app.models import Genre, Tag, Movie, MovieTag, MovieGenre, User, ShowSchedule, ShowRoom, Showtime, Show, Seat, \
     Ticket
 from app import app, db
-from app.encode import blowfish, RSA
+from app.encode import blowfish, RSA, caesar
 from flask_login import current_user
 
 
@@ -166,8 +166,12 @@ def pay_ticket(movie_id=None, show_schedule_id=None, showtime_id=None, showroom_
 
 def get_user_by_username(username=None):
     with app.app_context():
+        user = None
         if username:
-            return User.query.filter(User.username.__eq__(username.strip())).first()
+            for u in User.query.all():
+                if blowfish.decrypt(u.username, u.key).__eq__(username.strip()):
+                    user = u
+            return user
 
 
 def change_user_password(username, new_pass):
@@ -196,25 +200,24 @@ def get_ticket_info():
             ticket = ticket.filter(Ticket.user_id.__eq__(current_user.id))
         return ticket.all()
 
-
 # print(get_ticket_info())
 # print(current_user)
 
 # print(RSA.Ma_hoa('abc', RSA.e, RSA.N))
 
-def test():
-    user = None
-    with app.app_context():
-        for u in User.query.all():
-            if blowfish.decrypt(u.username, u.key).__eq__('kiet'):
-                user = u
-    print(blowfish.decrypt(user.password, user.key))
-    # print(user)
-    # if user:
-    #     temp = RSA.Ma_hoa(blowfish.decrypt(user.email, user.key), RSA.e, RSA.N)
-    #     temp_dec = RSA.Giai_ma(temp, RSA.d, RSA.N)
-    #     print(temp)
-    #     print(temp_dec)
+# def test():
+#     user = None
+#     with app.app_context():
+#         for u in User.query.all():
+#             if blowfish.decrypt(u.username, u.key).__eq__('locla123'):
+#                 user = u
+#     print(blowfish.decrypt(user.password, user.key))
+# print(user)
+# if user:
+#     temp = RSA.Ma_hoa(blowfish.decrypt(user.email, user.key), RSA.e, RSA.N)
+#     temp_dec = RSA.Giai_ma(temp, RSA.d, RSA.N)
+#     print(temp)
+#     print(temp_dec)
 
 
-test()
+# test()
