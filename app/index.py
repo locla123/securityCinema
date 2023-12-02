@@ -319,7 +319,7 @@ def detail():
 
     return render_template('detail.html', movie=movie)
 
-
+@login_required
 @app.route('/details')
 def details():
     tickets = dao.get_ticket_info()
