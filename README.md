@@ -3,7 +3,9 @@
 B1: tạo môi trường ảo (venv)
 
 B2: Mở terminal lên (lúc này phải trỏ vể venv), và install các thư viện trong file requirements.txt (pip install -r requirements.txt)
+
 B3: install flask_recaptcha (pip install flask_recaptcha)
+
 B4: Kết nối với database qua MySQL Workbench bằng cách cấu hình lại tên database và password ở file __init__.py
     - Ở dòng 9-10: 
     app.config["SQLALCHEMY_DATABASE_URI"] = str.format("mysql+pymysql://root:{}@localhost/tenCSDL?charset=utf8mb4",
