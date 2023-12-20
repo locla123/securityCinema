@@ -40,6 +40,7 @@ while math.gcd(e, n) != 1:  # Vòng lặp kiểm tra ucln của e vs n là 1
 
 d = mod_nghichdao(e, n)  # Tính d bằng công thức được xây dựng ở hàm trên
 
+
 # print("Public Key: ", e)
 # print("Private Key: ", d)
 # print("n: ", n)

@@ -19,5 +19,8 @@ def decrypt(cipher_text, key):
     cipher_text = base64.b64decode(cipher_text)
     iv = cipher_text[:Blowfish.block_size]
     cipher = Blowfish.new(key, Blowfish.MODE_CBC, iv)
-    plain_text = unpad(cipher.decrypt(cipher_text[Blowfish.block_size:]), Blowfish.block_size)
-    return plain_text.decode('utf-8')
+    try:
+        plain_text = unpad(cipher.decrypt(cipher_text[Blowfish.block_size:]), Blowfish.block_size)
+        return plain_text.decode('utf-8')
+    except Exception as ex:
+        print(str(ex))

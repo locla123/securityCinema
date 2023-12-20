@@ -1,3 +1,5 @@
+from sqlalchemy import case
+
 from app.models import Genre, Tag, Movie, MovieTag, MovieGenre, User, ShowSchedule, ShowRoom, Showtime, Show, Seat, \
     Ticket
 from app import app, db
@@ -89,16 +91,24 @@ def get_user_by_id(user_id):
 
 def check_user_valid(username=None, password=None):
     if username and password:
+
         with app.app_context():
             # user = User.query.filter(User.username.__eq__(blowfish.encrypt(username.strip(), User.key))).first()
             # user = User.query.filter(blowfish.decrypt(User.username, User.key).__eq__(username)).first()
             # if blowfish.decrypt(user.password, user.key).__eq__(password):
             #     return user
             user = None
+            print(username.strip())
             for u in User.query.all():
+                print(u.username)
+                print(u.key)
+                print(blowfish.decrypt(u.username, u.key))
+
                 if blowfish.decrypt(u.username, u.key).__eq__(username.strip()):
+                    print('haha')
                     user = u
                     break
+
             if blowfish.decrypt(user.password, user.key).__eq__(password):
                 user.full_name = blowfish.decrypt(user.full_name, user.key)
                 user.email = blowfish.decrypt(user.email, user.key)
@@ -144,7 +154,7 @@ def get_seats(showroom_id=None):
         seats = db.session.query(Seat.name, Seat.id).join(ShowRoom, ShowRoom.id.__eq__(Seat.show_room_id)).group_by(
             Seat.name, Seat.id)
 
-        seats = seats.filter(Seat.show_room_id.__eq__(showroom_id))
+        seats = seats.filter(Seat.show_room_id.__eq__(showroom_id), Seat.is_available.__eq__(True))
 
         return seats.all()
 
@@ -153,6 +163,7 @@ def pay_ticket(movie_id=None, show_schedule_id=None, showtime_id=None, showroom_
                total_price=None):
     if movie_id and show_schedule_id and showtime_id and showroom_id and seat_id and total_price:
         with app.app_context():
+            Seat.query.filter(Seat.id.__eq__(seat_id)).first().is_available = False
             t = Ticket(movie_id=movie_id,
                        show_schedule_id=show_schedule_id,
                        showtime_id=showtime_id,
@@ -176,12 +187,15 @@ def get_user_by_username(username=None):
 
 def change_user_password(username, new_pass):
     with app.app_context():
-        user = User.query.filter(User.username.__eq__(username.strip())).first()
+        user = None
+        if username:
+            for u in User.query.all():
+                if blowfish.decrypt(u.username, u.key).__eq__(username.strip()):
+                    user = u
         if user:
-            user.password = blowfish.encrypt(new_pass.strip(), blowfish.generate_key())
+            user.password = blowfish.encrypt(new_pass.strip(), user.key)
             db.session.commit()
-            return user
-        return None
+    return None
 
 
 def get_ticket_info():

@@ -67,7 +67,8 @@ class User(BaseModel, Base, UserMixin):
     avatar = Column(String(500),
                     default='https://icons.veryicon.com/png/o/miscellaneous/two-color-icon-library/user-286.png')
     username = Column(String(100), nullable=False, unique=True)
-    password = Column(String(100), nullable=False)
+    # password = Column(String(100), nullable=False)
+    password = Column(LargeBinary, nullable=False)
     user_role = Column(Enum(UserRole), default=UserRole.USER)
     key = Column(LargeBinary)
     joined_date = Column(DateTime, default=datetime.now())
@@ -131,7 +132,7 @@ class Ticket(BaseModel):
 
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()
+        # db.create_all()
 
         # t3 = Tag(name='Coming')
         # t2 = Tag(name='Promotion')
@@ -221,11 +222,11 @@ if __name__ == "__main__":
         # db.session.add_all([sh1, sh2, sh3, sh4])
         # db.session.commit()
 
-        # s1 = Seat(name='S01', show_room_id=1)
-        # s2 = Seat(name='S02', show_room_id=1)
-        # s3 = Seat(name='S03', show_room_id=1)
-        # s4 = Seat(name='S01', show_room_id=2)
-        # s5 = Seat(name='S02', show_room_id=2)
-        # s6 = Seat(name='S03', show_room_id=2)
-        # db.session.add_all([s1, s2, s3, s4, s5, s6])
-        # db.session.commit()
+        s1 = Seat(name='S01', show_room_id=1)
+        s2 = Seat(name='S02', show_room_id=1)
+        s3 = Seat(name='S03', show_room_id=1)
+        s4 = Seat(name='S01', show_room_id=2)
+        s5 = Seat(name='S02', show_room_id=2)
+        s6 = Seat(name='S03', show_room_id=2)
+        db.session.add_all([s1, s2, s3, s4, s5, s6])
+        db.session.commit()

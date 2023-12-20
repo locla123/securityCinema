@@ -2,18 +2,15 @@ import math
 import random
 
 from flask import render_template, request, redirect, url_for, jsonify, session
-from pyotp import TOTP
 
 from app import app, dao, login, recaptcha
 from app.encode import blowfish
-from flask_login import login_user, logout_user, login_required, current_user
+from flask_login import login_user, logout_user, login_required
 import cloudinary.uploader
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
-import requests
-
 
 
 def generate_otp():
@@ -71,35 +68,6 @@ def caesar_decrypt_seat_name(seat_name):
     return caesar_decrypt(seat_name, K)
 
 
-
-totp = TOTP('base32secret3232')
-
-
-def generate_otp():
-    return totp.now()
-
-
-def verify_otp(otp, user_otp):
-    print(otp)
-    print(user_otp)
-    if str(otp).__eq__(str(user_otp)):
-        return True
-    return False
-
-
-def send_otp_email(email, otp):
-    return requests.post(
-        "https://api.mailgun.net/v3/sandbox802e7eca77604dde9c15297ab748e4fb.mailgun.org/messages",
-        auth=("api", "db292522a7e22450feaff96e55e28d85-5d2b1caa-53959040"),
-        data={
-            "from": "Mailgun Sandbox <postmaster@sandbox802e7eca77604dde9c15297ab748e4fb.mailgun.org>",
-            "to": email,
-            "subject": "Your One-Time Password (OTP)",
-            "text": f"Your OTP is: {otp}"
-        }
-    )
-
-
 @app.route('/forget_pass', methods=['POST', 'GET'])
 def forget_pass():
     if request.method == 'POST':
@@ -108,8 +76,8 @@ def forget_pass():
             user = dao.get_user_by_username(username)
 
             if user:
-                user_mail = user.email
-                ma_otp = totp.generate_otp(40)
+                user_mail = blowfish.decrypt(user.email, user.key)
+                ma_otp = generate_otp()
                 send_otp_email(user_mail, ma_otp)
                 session['username'] = username
                 session['ma_otp'] = ma_otp
@@ -318,6 +286,7 @@ def detail():
     movie = dao.get_movie_by_id(movie_id=movie_id)
 
     return render_template('detail.html', movie=movie)
+
 
 @login_required
 @app.route('/details')
