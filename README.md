@@ -1,7 +1,6 @@
 **CÁCH RUN PROJECT SAU KHI CLONE VỀ:**
 
 B1: tạo môi trường ảo (venv)
-
 B2: Mở terminal lên (lúc này phải trỏ vể venv), và install các thư viện trong file requirements.txt (pip install -r requirements.txt)
 
 B3: install flask_recaptcha (pip install flask_recaptcha)
